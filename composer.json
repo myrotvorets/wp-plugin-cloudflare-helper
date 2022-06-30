@@ -25,12 +25,10 @@
 		"dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
 		"johnpbloch/wordpress-core": "^6.0",
 		"php-stubs/wordpress-stubs": "^5.7",
-		"php-stubs/wp-cli-stubs": "^2.5",
 		"phpcompatibility/phpcompatibility-wp": "^2.1",
 		"phpunit/phpunit": "^9",
 		"psalm/plugin-phpunit": "^0.16.1",
 		"vimeo/psalm": "^4.7",
-		"wp-cli/wp-cli": "^2.5",
 		"wp-coding-standards/wpcs": "^2.3",
 		"yoast/phpunit-polyfills": "^1.0"
 	},
