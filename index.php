@@ -1,6 +1,7 @@
 <?php
 /*
  * Plugin Name: Cloudflare Helper
+ * Description: Cloudflare Helper
  * Plugin URI: https://myrotvorets.center/
  * Version: 1.0.0
  * Author: Myrotvorets
