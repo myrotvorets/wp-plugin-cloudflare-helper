@@ -1,0 +1,81 @@
+<?php
+
+namespace {
+	define( 'MINUTE_IN_SECONDS', 60 );
+	define( 'HOUR_IN_SECONDS', (int) ( 60 * MINUTE_IN_SECONDS ) );
+	define( 'DAY_IN_SECONDS', (int) ( 24 * HOUR_IN_SECONDS ) );
+	define( 'WEEK_IN_SECONDS', (int) ( 7 * DAY_IN_SECONDS ) );
+	define( 'MONTH_IN_SECONDS', (int) ( 30 * DAY_IN_SECONDS ) );
+	define( 'YEAR_IN_SECONDS', (int) ( 365 * DAY_IN_SECONDS ) );
+
+	define( 'COOKIEPATH', expr );
+	define( 'COOKIE_DOMAIN', expr );
+
+	define( 'CLOUDFLARE_DOMAIN', /** @var string $expr */ $expr = '' );
+
+	/**
+	 * Adds slashes to a string or recursively adds slashes to strings within an array.
+	 *
+	 * This should be used when preparing data for core API that expects slashed data.
+	 * This should not be used to escape data going directly into an SQL query.
+	 *
+	 * @since 3.6.0
+	 * @since 5.5.0 Non-string values are left untouched.
+	 *
+	 * @psalm-template T of string|array
+	 * @psalm-param T $value String or array of data to slash.
+	 * @psalm-return T Slashed $value.
+	 */
+	function wp_slash( $value ) {}
+
+	/**
+	 * Removes slashes from a string or recursively removes slashes from strings within an array.
+	 *
+	 * This should be used to remove slashes from data passed to core API that
+	 * expects data to be unslashed.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @psalm-template T of string|array
+	 * @param T $value String or array of data to unslash.
+	 * @return T Unslashed $value.
+	 */
+	function wp_unslash( $value ) {}
+
+	/**
+	 * @param string $hook_name The name of the filter hook.
+	 * @param mixed  $value     The value to filter.
+	 * @param mixed  ...$args   Additional parameters to pass to the callback functions.
+	 * @return mixed The filtered value after all hooked functions are applied to it.
+	 */
+	function apply_filters( $hook_name, $value, ...$args ) {}
+
+	define( 'OBJECT', 'OBJECT' );
+	define( 'object', 'OBJECT' );
+	define( 'OBJECT_K', 'OBJECT_K' );
+	define( 'ARRAY_A', 'ARRAY_A' );
+	define( 'ARRAY_N', 'ARRAY_N' );
+
+	class wpdb {
+
+		/** @var string */
+		public $criminals_table;
+
+		/** @var string */
+		public $criminal_comments_table;
+
+		/**
+		 * @param string $query
+		 * @param mixed $args
+		 * @return string
+		 */
+		public function prepare( $query, ...$args );
+	}
+
+	/**
+	 * @param mixed $thing The variable to check.
+	 * @return bool Whether the variable is an instance of WP_Error.
+	 * @psalm-assert-if-true WP_Error $thing
+	 */
+	function is_wp_error( $thing ) {}
+}
