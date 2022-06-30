@@ -1,5 +1,5 @@
 {
-	"name": "myrotvorets/cloudflare-helper",
+	"name": "myrotvorets/wp-cloudflare-helper",
 	"type": "wordpress-plugin",
 	"description": "Cloudflare Helper",
 	"keywords": [
