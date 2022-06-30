@@ -1,0 +1,53 @@
+{
+	"name": "myrotvorets/cloudflare-helper",
+	"type": "wordpress-plugin",
+	"description": "Cloudflare Helper",
+	"keywords": [
+	],
+	"license": "MIT",
+	"autoload": {
+		"classmap": [
+			"inc/"
+		]
+	},
+	"autoload-dev": {
+		"classmap": [
+			"tests/"
+		]
+	},
+	"require": {
+		"php": "^7.4.0 || ^8.0.0",
+		"composer/installers": "^2.0",
+		"wildwolf/singleton-trait": "^1.0.1"
+	},
+	"require-dev": {
+		"automattic/vipwpcs": "^2.3",
+		"dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
+		"johnpbloch/wordpress-core": "^6.0",
+		"php-stubs/wordpress-stubs": "^5.7",
+		"php-stubs/wp-cli-stubs": "^2.5",
+		"phpcompatibility/phpcompatibility-wp": "^2.1",
+		"phpunit/phpunit": "^9",
+		"psalm/plugin-phpunit": "^0.16.1",
+		"vimeo/psalm": "^4.7",
+		"wp-cli/wp-cli": "^2.5",
+		"wp-coding-standards/wpcs": "^2.3",
+		"yoast/phpunit-polyfills": "^1.0"
+	},
+	"config": {
+		"sort-packages": true,
+		"platform": {
+			"php": "7.4"
+		},
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true,
+			"composer/package-versions-deprecated": true,
+			"composer/installers": true
+		}
+	},
+	"scripts": {
+		"phpcs": "phpcs",
+		"phpcs:fix": "phpcbf",
+		"psalm": "psalm --long-progress --no-cache"
+	}
+}
