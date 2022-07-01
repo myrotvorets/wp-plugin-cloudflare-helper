@@ -29,11 +29,8 @@ jobs:
           coverage: none
           php-version: ${{ env.PHP_VERSION }}
 
-      - name: Install PHP dependencies
+      - name: Install dependencies
         uses: ramsey/composer-install@f680dac46551dffb2234a240d65ae806c2999dd6 # tag=2.1.0
-
-      - name: Create node_modules directory
-        run: mkdir -p node_modules
 
       - name: Run psalm
         run: composer psalm -- --output-format=github
