@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase
 
 namespace Myrotvorets\WordPress\CloudflareHelper;
 
@@ -25,6 +26,17 @@ class Plugin {
 		}
 
 		add_filter( 'cloudflare_purge_by_url', [ $this, 'cloudflare_purge_by_url' ] );
+		$this->patch_cloudflare_hooks();
+	}
+
+	private function patch_cloudflare_hooks(): void {
+		global $cloudflareHooks;
+		if ( isset( $cloudflareHooks ) && is_object( $cloudflareHooks ) ) {
+			remove_action( 'transition_post_status', [ $cloudflareHooks, 'purgeCacheOnPostStatusChange' ], PHP_INT_MAX );
+			add_action( 'transition_post_status', [ $this, 'transition_post_status' ], PHP_INT_MAX, 3 );
+			add_action( 'purge_post_cf_cache', [ $this, 'purge_post_cf_cache' ] );
+		}
+
 	}
 
 	/**
@@ -76,5 +88,26 @@ class Plugin {
 
 		unset( $url );
 		return $urls;
+	}
+
+	/**
+	 * @param string $new_status
+	 * @param string $old_status
+	 * @param \WP_Post $post
+	 */
+	public function transition_post_status( $new_status, $old_status, $post ): void {
+		if ( 'publish' === $new_status || 'publish' === $old_status ) {
+			wp_schedule_single_event( time() + 1, 'purge_post_cf_cache', [ $post->ID ] );
+		}
+	}
+
+	/**
+	 * @param int $post_id
+	 * @psalm-suppress UndefinedDocblockClass
+	 */
+	public function purge_post_cf_cache( $post_id ): void {
+		/** @var \CF\WordPress\Hooks $cloudflareHooks */
+		global $cloudflareHooks;
+		$cloudflareHooks->purgeCacheByRelevantURLs( $post_id );
 	}
 }
