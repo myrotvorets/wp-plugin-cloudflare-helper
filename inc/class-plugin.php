@@ -139,8 +139,9 @@ class Plugin {
 
 		unset( $url );
 
+		/** @var \WP_Post|null */
 		$post = get_post( $post_id );
-		if ( 'criminal' === $post->post_type && 'trash' === $post->post_status ) {
+		if ( $post && 'criminal' === $post->post_type && 'trash' === $post->post_status ) {
 			$name   = str_ends_with( $post->post_name, '__trashed' ) ? substr( $post->post_name, 0, -strlen( '__trashed' ) ) : $post->post_name;
 			$urls[] = "https://myrotvorets.center/criminal/{$name}/";
 		}
@@ -149,7 +150,7 @@ class Plugin {
 	}
 
 	/**
-	 * @param false|array|WP_Error
+	 * @param false|array|WP_Error $response
 	 * @param array $args
 	 * @param string $url
 	 * @return false|array|WP_Error
@@ -162,10 +163,12 @@ class Plugin {
 		$body = $args['body'] ?? '';
 
 		if ( 'DELETE' === $method && is_string( $body ) && ! empty( $body ) && preg_match( '!^https://api.cloudflare.com/client/v4/zones/[0-9a-f]{32}/purge_cache!', $url ) ) {
+			/** @var mixed */
 			$body = json_decode( $body, true );
-			if ( ! empty( $body['files'] ) && is_array( $body['files'] ) ) {
+			if ( is_array( $body ) && ! empty( $body['files'] ) && is_array( $body['files'] ) ) {
+				/** @psalm-var string[] $body['files'] */
 				$this->urls_to_purge = array_merge( $this->urls_to_purge, $body['files'] );
-				$response = [
+				$response            = [
 					'headers'  => [],
 					'body'     => wp_json_encode( [ 'success' => true ] ),
 					'response' => [
@@ -207,6 +210,7 @@ class Plugin {
 	/**
 	 * @param string[] $urls
 	 * @codeCoverageIgnore
+	 * @psalm-suppress UndefinedClass
 	 */
 	public function psb4ukr_purge_cf_urls( array $urls ): void {
 		$client = self::get_api_client();
@@ -224,7 +228,6 @@ class Plugin {
 		$chunks = array_chunk( $urls, 30 );
 		foreach ( $chunks as $chunk ) {
 			$client->zonePurgeFiles( $zone, $chunk );
-			error_log( print_r( $chunk, true ) );
 		}
 
 		if ( false !== $has_filter ) {

@@ -26,7 +26,7 @@ class Test_Plugin extends WP_UnitTestCase {
 			'http://my-domain.dev/test-page',
 		];
 
-		$actual = Plugin::instance()->cloudflare_purge_by_url( $input );
+		$actual = Plugin::instance()->cloudflare_purge_by_url( $input, -1 );
 		self::assertEquals( $expected, $actual );
 	}
 
