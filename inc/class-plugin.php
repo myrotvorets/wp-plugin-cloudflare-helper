@@ -9,10 +9,14 @@ use CF\Integration\DefaultLogger;
 use CF\WordPress\DataStore;
 use CF\WordPress\WordPressAPI;
 use CF\WordPress\WordPressClientAPI;
+use WP_Error;
 use WildWolf\Utils\Singleton;
 
 class Plugin {
 	use Singleton;
+
+	/** @var string[] */
+	private $urls_to_purge = [];
 
 	/**
 	 * @codeCoverageIgnore
@@ -76,18 +80,11 @@ class Plugin {
 			add_action( 'admin_init', [ $this, 'admin_init' ] );
 		}
 
-		add_filter( 'cloudflare_purge_by_url', [ $this, 'cloudflare_purge_by_url' ] );
-		$this->patch_cloudflare_hooks();
-	}
-
-	private function patch_cloudflare_hooks(): void {
-		global $cloudflareHooks;
-		if ( isset( $cloudflareHooks ) && is_object( $cloudflareHooks ) ) {
-			remove_action( 'transition_post_status', [ $cloudflareHooks, 'purgeCacheOnPostStatusChange' ], PHP_INT_MAX );
-			add_action( 'transition_post_status', [ $this, 'transition_post_status' ], PHP_INT_MAX, 3 );
-			add_action( 'purge_post_cf_cache', [ $this, 'purge_post_cf_cache' ] );
-		}
-
+		add_filter( 'cloudflare_purge_by_url', [ $this, 'cloudflare_purge_by_url' ], 10, 2 );
+		add_filter( 'pre_http_request', [ $this, 'pre_http_request' ], 10, 3 );
+		add_action( 'shutdown', [ $this, 'shutdown' ] );
+		add_action( 'psb4ukr_do_deferred_cf_purge', [ $this, 'psb4ukr_do_deferred_cf_purge' ] );
+		add_action( 'psb4ukr_purge_cf_urls', [ $this, 'psb4ukr_purge_cf_urls' ] );
 	}
 
 	/**
@@ -127,9 +124,10 @@ class Plugin {
 
 	/**
 	 * @param string[] $urls
+	 * @param int $post_id
 	 * @return string[]
 	 */
-	public function cloudflare_purge_by_url( array $urls ): array {
+	public function cloudflare_purge_by_url( array $urls, $post_id ): array {
 		assert( defined( 'CLOUDFLARE_DOMAIN' ) );
 
 		$domain = (string) constant( 'CLOUDFLARE_DOMAIN' );
@@ -140,27 +138,97 @@ class Plugin {
 		}
 
 		unset( $url );
+
+		$post = get_post( $post_id );
+		if ( 'criminal' === $post->post_type && 'trash' === $post->post_status ) {
+			$name   = str_ends_with( $post->post_name, '__trashed' ) ? substr( $post->post_name, 0, -strlen( '__trashed' ) ) : $post->post_name;
+			$urls[] = "https://myrotvorets.center/criminal/{$name}/";
+		}
+
 		return $urls;
 	}
 
 	/**
-	 * @param string $new_status
-	 * @param string $old_status
-	 * @param \WP_Post $post
+	 * @param false|array|WP_Error
+	 * @param array $args
+	 * @param string $url
+	 * @return false|array|WP_Error
+	 * @codeCoverageIgnore
 	 */
-	public function transition_post_status( $new_status, $old_status, $post ): void {
-		if ( 'publish' === $new_status || 'publish' === $old_status ) {
-			wp_schedule_single_event( time() + 1, 'purge_post_cf_cache', [ $post->ID ] );
+	public function pre_http_request( $response, $args, $url ) {
+		/** @var mixed */
+		$method = $args['method'] ?? '';
+		/** @var mixed */
+		$body = $args['body'] ?? '';
+
+		if ( 'DELETE' === $method && is_string( $body ) && ! empty( $body ) && preg_match( '!^https://api.cloudflare.com/client/v4/zones/[0-9a-f]{32}/purge_cache!', $url ) ) {
+			$body = json_decode( $body, true );
+			if ( ! empty( $body['files'] ) && is_array( $body['files'] ) ) {
+				$this->urls_to_purge = array_merge( $this->urls_to_purge, $body['files'] );
+				$response = [
+					'headers'  => [],
+					'body'     => wp_json_encode( [ 'success' => true ] ),
+					'response' => [
+						'code'    => 200,
+						'message' => 'OK',
+					],
+					'cookies'  => [],
+					'filename' => '',
+				];
+			}
+		}
+
+		return $response;
+	}
+
+	/**
+	 * @codeCoverageIgnore
+	 */
+	public function shutdown( bool $now = false ): void {
+		if ( ! empty( $this->urls_to_purge ) ) {
+			$urls                = array_unique( $this->urls_to_purge );
+			$this->urls_to_purge = [];
+
+			if ( $now ) {
+				do_action( 'psb4ukr_purge_cf_urls', $urls );
+			} else {
+				wp_schedule_single_event( time() + 1, 'psb4ukr_purge_cf_urls', [ $urls ] );
+			}
 		}
 	}
 
 	/**
-	 * @param int $post_id
-	 * @psalm-suppress UndefinedDocblockClass
+	 * @codeCoverageIgnore
 	 */
-	public function purge_post_cf_cache( $post_id ): void {
-		/** @var \CF\WordPress\Hooks $cloudflareHooks */
-		global $cloudflareHooks;
-		$cloudflareHooks->purgeCacheByRelevantURLs( $post_id );
+	public function psb4ukr_do_deferred_cf_purge(): void {
+		$this->shutdown( true );
+	}
+
+	/**
+	 * @param string[] $urls
+	 * @codeCoverageIgnore
+	 */
+	public function psb4ukr_purge_cf_urls( array $urls ): void {
+		$client = self::get_api_client();
+		$zone   = self::get_zone_id();
+
+		if ( ! $client || ! $zone ) {
+			return;
+		}
+
+		$has_filter = has_filter( 'pre_http_request', [ $this, 'pre_http_request' ] );
+		if ( false !== $has_filter ) {
+			remove_filter( 'pre_http_request', [ $this, 'pre_http_request' ], 10 );
+		}
+
+		$chunks = array_chunk( $urls, 30 );
+		foreach ( $chunks as $chunk ) {
+			$client->zonePurgeFiles( $zone, $chunk );
+			error_log( print_r( $chunk, true ) );
+		}
+
+		if ( false !== $has_filter ) {
+			add_filter( 'pre_http_request', [ $this, 'pre_http_request' ], 10, 3 );
+		}
 	}
 }
