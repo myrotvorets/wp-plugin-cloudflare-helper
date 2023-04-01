@@ -25,16 +25,44 @@ class Plugin {
 
 	/**
 	 * @psalm-suppress UndefinedClass
+	 * @psalm-suppress MixedReturnStatement
+	 * @psalm-suppress MixedInferredReturnType
 	 * @codeCoverageIgnore
 	 */
 	public static function get_api_client(): ?WordPressClientAPI {
 		if ( defined( 'CLOUDFLARE_PLUGIN_DIR' ) ) {
-			$config             = new DefaultConfig( file_get_contents( CLOUDFLARE_PLUGIN_DIR . 'config.json', true ) );
-			$logger             = new DefaultLogger( $config->getValue( 'debug' ) );
-			$dataStore          = new DataStore( $logger );
-			$integrationAPI     = new WordPressAPI( $dataStore );
-			$integrationContext = new DefaultIntegration( $config, $integrationAPI, $dataStore, $logger );
-			return new WordPressClientAPI( $integrationContext );
+			static $api_client = null;
+
+			if ( null === $api_client ) {
+				$config             = new DefaultConfig( file_get_contents( CLOUDFLARE_PLUGIN_DIR . 'config.json', true ) );
+				$logger             = new DefaultLogger( $config->getValue( 'debug' ) );
+				$dataStore          = new DataStore( $logger );
+				$integrationAPI     = new WordPressAPI( $dataStore );
+				$integrationContext = new DefaultIntegration( $config, $integrationAPI, $dataStore, $logger );
+				$api_client         = new WordPressClientAPI( $integrationContext );
+			}
+
+			return $api_client;
+		}
+
+		return null;
+	}
+
+	/**
+	 * @psalm-suppress UndefinedClass
+	 * @codeCoverageIgnore
+	 */
+	public static function get_zone_id(): ?string {
+		if ( defined( 'CLOUDFLARE_DOMAIN' ) && constant( 'CLOUDFLARE_DOMAIN' ) ) {
+			/** @var string */
+			$domain = constant( 'CLOUDFLARE_DOMAIN' );
+
+			$client = self::get_api_client();
+			if ( $client ) {
+				/** @var mixed $value */
+				$value = $client->getZoneTag( $domain );
+				return is_string( $value ) ? $value : null;
+			}
 		}
 
 		return null;
