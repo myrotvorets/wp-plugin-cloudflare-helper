@@ -3,6 +3,12 @@
 
 namespace Myrotvorets\WordPress\CloudflareHelper;
 
+use CF\Integration\DefaultConfig;
+use CF\Integration\DefaultIntegration;
+use CF\Integration\DefaultLogger;
+use CF\WordPress\DataStore;
+use CF\WordPress\WordPressAPI;
+use CF\WordPress\WordPressClientAPI;
 use WildWolf\Utils\Singleton;
 
 class Plugin {
@@ -15,6 +21,23 @@ class Plugin {
 		if ( defined( 'CLOUDFLARE_DOMAIN' ) && constant( 'CLOUDFLARE_DOMAIN' ) ) {
 			add_action( 'init', [ $this, 'init' ] );
 		}
+	}
+
+	/**
+	 * @psalm-suppress UndefinedClass
+	 * @codeCoverageIgnore
+	 */
+	public static function get_api_client(): ?WordPressClientAPI {
+		if ( defined( 'CLOUDFLARE_PLUGIN_DIR' ) ) {
+			$config             = new DefaultConfig( file_get_contents( CLOUDFLARE_PLUGIN_DIR . 'config.json', true ) );
+			$logger             = new DefaultLogger( $config->getValue( 'debug' ) );
+			$dataStore          = new DataStore( $logger );
+			$integrationAPI     = new WordPressAPI( $dataStore );
+			$integrationContext = new DefaultIntegration( $config, $integrationAPI, $dataStore, $logger );
+			return new WordPressClientAPI( $integrationContext );
+		}
+
+		return null;
 	}
 
 	/**
