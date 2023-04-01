@@ -134,7 +134,9 @@ class Plugin {
 
 		$domain = (string) constant( 'CLOUDFLARE_DOMAIN' );
 		foreach ( $urls as &$url ) {
-			$url = preg_replace( '!^(https?:)//([^/]+)!', '\\1//' . $domain, $url );
+			if ( ! str_starts_with( $url, 'https://cdn.myrotvorets.center' ) ) {
+				$url = preg_replace( '!^(https?:)//([^/]+)!', '\\1//' . $domain, $url );
+			}
 		}
 
 		unset( $url );
