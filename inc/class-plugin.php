@@ -139,7 +139,6 @@ class Plugin {
 
 		unset( $url );
 
-		/** @var \WP_Post|null */
 		$post = get_post( $post_id );
 		if ( $post && 'criminal' === $post->post_type && 'trash' === $post->post_status ) {
 			$name   = str_ends_with( $post->post_name, '__trashed' ) ? substr( $post->post_name, 0, -strlen( '__trashed' ) ) : $post->post_name;
