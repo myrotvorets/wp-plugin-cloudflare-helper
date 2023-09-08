@@ -58,7 +58,6 @@ class Plugin {
 	 */
 	public static function get_zone_id(): ?string {
 		if ( defined( 'CLOUDFLARE_DOMAIN' ) && constant( 'CLOUDFLARE_DOMAIN' ) ) {
-			/** @var string */
 			$domain = constant( 'CLOUDFLARE_DOMAIN' );
 
 			$client = self::get_api_client();
