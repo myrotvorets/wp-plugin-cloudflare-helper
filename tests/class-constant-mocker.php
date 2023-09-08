@@ -1,5 +1,9 @@
 <?php
 
+// phpcs:disable Universal.Namespaces.DisallowCurlyBraceSyntax.Forbidden
+// phpcs:disable Universal.Namespaces.OneDeclarationPerFile.MultipleFound
+// phpcs:disable Universal.Files.SeparateFunctionsFromOO.Mixed
+
 namespace Myrotvorets\Test {
 	use InvalidArgumentException;
 
@@ -16,6 +20,7 @@ namespace Myrotvorets\Test {
 
 		public static function define( string $constant, $value ): void {
 			if ( isset( self::$constants[ $constant ] ) ) {
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				throw new InvalidArgumentException( sprintf( 'Constant "%s" is already defined', $constant ) );
 			}
 
@@ -28,6 +33,7 @@ namespace Myrotvorets\Test {
 
 		public static function constant( string $constant ) {
 			if ( ! isset( self::$constants[ $constant ] ) ) {
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				throw new InvalidArgumentException( sprintf( 'Constant "%s" is not defined', $constant ) );
 			}
 
