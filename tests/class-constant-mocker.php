@@ -20,7 +20,7 @@ namespace Myrotvorets\Test {
 
 		public static function define( string $constant, $value ): void {
 			if ( isset( self::$constants[ $constant ] ) ) {
-				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- tests/CLI
 				throw new InvalidArgumentException( sprintf( 'Constant "%s" is already defined', $constant ) );
 			}
 
@@ -33,7 +33,7 @@ namespace Myrotvorets\Test {
 
 		public static function constant( string $constant ) {
 			if ( ! isset( self::$constants[ $constant ] ) ) {
-				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- tests/CLI
 				throw new InvalidArgumentException( sprintf( 'Constant "%s" is not defined', $constant ) );
 			}
 
