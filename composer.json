@@ -22,7 +22,7 @@
 	},
 	"require-dev": {
 		"automattic/vipwpcs": "^3.0",
-		"johnpbloch/wordpress-core": "^6.3.1",
+		"johnpbloch/wordpress-core": "^6.3.2",
 		"php-stubs/wordpress-stubs": "^6.3.0",
 		"phpcompatibility/phpcompatibility-wp": "^2.1.4",
 		"psalm/plugin-phpunit": "^0.18.4",
