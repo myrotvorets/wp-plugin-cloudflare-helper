@@ -11,14 +11,10 @@ concurrency:
 permissions:
   contents: read
 
-env:
-  PHP_VERSION: "8.0"
-
 jobs:
   psalm:
     runs-on: ubuntu-latest
     name: Psalm
-    if: "!contains(github.event.head_commit.message, '[ci skip]')"
     steps:
       - name: Check out source code
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
@@ -27,7 +23,6 @@ jobs:
         uses: shivammathur/setup-php@a36e1e52ff4a1c9e9c9be31551ee4712a6cb6bd0 # 2.27.1
         with:
           coverage: none
-          php-version: ${{ env.PHP_VERSION }}
 
       - name: Install dependencies
         uses: ramsey/composer-install@83af392bf5f031813d25e6fe4cd626cdba9a2df6 # tag=2.2.0

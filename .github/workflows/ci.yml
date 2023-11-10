@@ -14,21 +14,19 @@ permissions:
 jobs:
   unit-tests:
     name: "WP ${{ matrix.config.wp }}, multisite: ${{ matrix.config.ms }}, PHP: ${{ matrix.config.php }}"
-    if: "!contains(github.event.head_commit.message, '[ci skip]')"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         config:
-          - { wp: latest,  ms: 'no',  php: '7.4', phpunit: 7 }
-          - { wp: nightly, ms: 'no',  php: '7.4', phpunit: 7 }
-          - { wp: latest,  ms: 'yes', php: '7.4', phpunit: 7 }
-          - { wp: nightly, ms: 'yes', php: '7.4', phpunit: 7 }
-
-          - { wp: latest,  ms: 'no',  php: '8.0', phpunit: 9, coverage: 'yes' }
-          - { wp: nightly, ms: 'no',  php: '8.0', phpunit: 9, coverage: 'yes' }
-          - { wp: latest,  ms: 'yes', php: '8.0', phpunit: 9, coverage: 'yes' }
-          - { wp: nightly, ms: 'yes', php: '8.0', phpunit: 9, coverage: 'yes' }
+          - { wp: latest,  ms: 'no',  php: '8.1', phpunit: 9, coverage: 'yes' }
+          - { wp: nightly, ms: 'no',  php: '8.1', phpunit: 9, coverage: 'yes' }
+          - { wp: latest,  ms: 'yes', php: '8.1', phpunit: 9, coverage: 'yes' }
+          - { wp: nightly, ms: 'yes', php: '8.1', phpunit: 9, coverage: 'yes' }
+          - { wp: latest,  ms: 'no',  php: '8.2', phpunit: 9 }
+          - { wp: nightly, ms: 'no',  php: '8.2', phpunit: 9 }
+          - { wp: latest,  ms: 'yes', php: '8.2', phpunit: 9 }
+          - { wp: nightly, ms: 'yes', php: '8.2', phpunit: 9 }
     services:
       mysql:
         image: mariadb:latest@sha256:2403cc521634162f743b5179ff5b35520daf72df5d9e7e397192af685d9148fd
@@ -48,11 +46,11 @@ jobs:
         id: coverage
         run: |
           if [ "${{ matrix.config.coverage }}" = "yes" ]; then
-            echo "::set-output name=coverage::pcov"
-            echo '::set-output name=ini::pcov.directory=inc, pcov.exclude="~/(vendor|tests)/~"'
+            echo "coverage=pcov" >> "${GITHUB_OUTPUT}"
+            echo 'ini=pcov.directory=inc, pcov.exclude="~/(vendor|tests)/~"' >> "${GITHUB_OUTPUT}"
           else
-            echo "::set-output name=coverage::none"
-            echo "::set-output name=ini::opcache.enable_cli=1, opcache.jit=tracing, opcache.jit_buffer_size=64M"
+            echo "coverage=none" >> "${GITHUB_OUTPUT}"
+            echo "ini=opcache.enable_cli=1, opcache.jit=tracing, opcache.jit_buffer_size=64M" >> "${GITHUB_OUTPUT}"
           fi
 
       - name: Set up PHP
