@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2d6a62a4b6aa2932ffbd597b93aa7f8a",
+    "content-hash": "fa7f09ecd30d1e35d45b304ba166c61b",
     "packages": [
         {
             "name": "composer/installers",
@@ -1106,16 +1106,16 @@
         },
         {
             "name": "johnpbloch/wordpress-core",
-            "version": "6.4.0",
+            "version": "6.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/johnpbloch/wordpress-core.git",
-                "reference": "9affce6bea176c5449353603f888cc6b8b066778"
+                "reference": "bc7bf692e02d9d18c81ab167ef6e9036d0becde0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/johnpbloch/wordpress-core/zipball/9affce6bea176c5449353603f888cc6b8b066778",
-                "reference": "9affce6bea176c5449353603f888cc6b8b066778",
+                "url": "https://api.github.com/repos/johnpbloch/wordpress-core/zipball/bc7bf692e02d9d18c81ab167ef6e9036d0becde0",
+                "reference": "bc7bf692e02d9d18c81ab167ef6e9036d0becde0",
                 "shasum": ""
             },
             "require": {
@@ -1123,7 +1123,7 @@
                 "php": ">=7.0.0"
             },
             "provide": {
-                "wordpress/core-implementation": "6.4.0"
+                "wordpress/core-implementation": "6.4.1"
             },
             "type": "wordpress-core",
             "notification-url": "https://packagist.org/downloads/",
@@ -1150,7 +1150,7 @@
                 "source": "https://core.trac.wordpress.org/browser",
                 "wiki": "https://codex.wordpress.org/"
             },
-            "time": "2023-11-07T19:31:18+00:00"
+            "time": "2023-11-09T01:33:28+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -1431,25 +1431,27 @@
         },
         {
             "name": "php-stubs/wordpress-stubs",
-            "version": "v6.3.2",
+            "version": "v6.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-stubs/wordpress-stubs.git",
-                "reference": "f22b00cacd3b9addc2b07ff48290084503c48574"
+                "reference": "6d6063cf9464a306ca2a0529705d41312b08500b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-stubs/wordpress-stubs/zipball/f22b00cacd3b9addc2b07ff48290084503c48574",
-                "reference": "f22b00cacd3b9addc2b07ff48290084503c48574",
+                "url": "https://api.github.com/repos/php-stubs/wordpress-stubs/zipball/6d6063cf9464a306ca2a0529705d41312b08500b",
+                "reference": "6d6063cf9464a306ca2a0529705d41312b08500b",
                 "shasum": ""
             },
             "require-dev": {
+                "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
                 "nikic/php-parser": "^4.13",
                 "php": "^7.4 || ~8.0.0",
                 "php-stubs/generator": "^0.8.3",
                 "phpdocumentor/reflection-docblock": "^5.3",
                 "phpstan/phpstan": "^1.10.12",
-                "phpunit/phpunit": "^9.5"
+                "phpunit/phpunit": "^9.5",
+                "szepeviktor/phpcs-psr-12-neutron-hybrid-ruleset": "^0.8"
             },
             "suggest": {
                 "paragonie/sodium_compat": "Pure PHP implementation of libsodium",
@@ -1470,9 +1472,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-stubs/wordpress-stubs/issues",
-                "source": "https://github.com/php-stubs/wordpress-stubs/tree/v6.3.2"
+                "source": "https://github.com/php-stubs/wordpress-stubs/tree/v6.4.1"
             },
-            "time": "2023-10-14T10:08:05+00:00"
+            "time": "2023-11-10T00:33:47+00:00"
         },
         {
             "name": "phpcompatibility/php-compatibility",
