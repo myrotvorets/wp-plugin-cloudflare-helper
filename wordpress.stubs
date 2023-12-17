@@ -8,6 +8,8 @@ namespace {
 	define( 'MONTH_IN_SECONDS', (int) ( 30 * DAY_IN_SECONDS ) );
 	define( 'YEAR_IN_SECONDS', (int) ( 365 * DAY_IN_SECONDS ) );
 
+	define( 'ABSPATH', '/wp' );
+
 	define( 'COOKIEPATH', expr );
 	define( 'COOKIE_DOMAIN', expr );
 
