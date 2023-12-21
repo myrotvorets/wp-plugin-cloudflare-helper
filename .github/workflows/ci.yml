@@ -27,6 +27,10 @@ jobs:
           - { wp: nightly, ms: 'no',  php: '8.2', phpunit: 9 }
           - { wp: latest,  ms: 'yes', php: '8.2', phpunit: 9 }
           - { wp: nightly, ms: 'yes', php: '8.2', phpunit: 9 }
+          - { wp: latest,  ms: 'no',  php: '8.3', phpunit: 9 }
+          - { wp: nightly, ms: 'no',  php: '8.3', phpunit: 9 }
+          - { wp: latest,  ms: 'yes', php: '8.3', phpunit: 9 }
+          - { wp: nightly, ms: 'yes', php: '8.3', phpunit: 9 }
     services:
       mysql:
         image: mariadb:latest@sha256:9da6213d1a5714c4585c9c0003c51510b320d6f60e53d78701fe1e194126249f
