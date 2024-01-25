@@ -33,7 +33,7 @@ jobs:
           - { wp: nightly, ms: 'yes', php: '8.3', phpunit: 9 }
     services:
       mysql:
-        image: mariadb:latest@sha256:9da6213d1a5714c4585c9c0003c51510b320d6f60e53d78701fe1e194126249f
+        image: mariadb:latest@sha256:eb6a2d34367b662a6e9c92e8cd112bbadf03ad4627f8eeb8d19f480f8da87fa6
         ports:
           - "3306:3306"
         env:
