@@ -214,7 +214,7 @@ class Plugin {
 	 */
 	public function psb4ukr_purge_cf_urls( array $urls ): void {
 		$client = self::get_api_client();
-		$zone   = self::get_zone_id();
+		$zone   = (string) self::get_zone_id();
 
 		if ( ! $client || ! $zone ) {
 			return;
