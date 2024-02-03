@@ -19,18 +19,18 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - { wp: latest,  ms: 'no',  php: '8.1', phpunit: 9, coverage: 'yes' }
-          - { wp: nightly, ms: 'no',  php: '8.1', phpunit: 9, coverage: 'yes' }
-          - { wp: latest,  ms: 'yes', php: '8.1', phpunit: 9, coverage: 'yes' }
-          - { wp: nightly, ms: 'yes', php: '8.1', phpunit: 9, coverage: 'yes' }
-          - { wp: latest,  ms: 'no',  php: '8.2', phpunit: 9 }
-          - { wp: nightly, ms: 'no',  php: '8.2', phpunit: 9 }
-          - { wp: latest,  ms: 'yes', php: '8.2', phpunit: 9 }
-          - { wp: nightly, ms: 'yes', php: '8.2', phpunit: 9 }
-          - { wp: latest,  ms: 'no',  php: '8.3', phpunit: 9 }
-          - { wp: nightly, ms: 'no',  php: '8.3', phpunit: 9 }
-          - { wp: latest,  ms: 'yes', php: '8.3', phpunit: 9 }
-          - { wp: nightly, ms: 'yes', php: '8.3', phpunit: 9 }
+          - { wp: latest,  ms: 'no',  php: '8.1', coverage: 'yes' }
+          - { wp: nightly, ms: 'no',  php: '8.1', coverage: 'yes' }
+          - { wp: latest,  ms: 'yes', php: '8.1', coverage: 'yes' }
+          - { wp: nightly, ms: 'yes', php: '8.1', coverage: 'yes' }
+          - { wp: latest,  ms: 'no',  php: '8.2' }
+          - { wp: nightly, ms: 'no',  php: '8.2' }
+          - { wp: latest,  ms: 'yes', php: '8.2' }
+          - { wp: nightly, ms: 'yes', php: '8.2' }
+          - { wp: latest,  ms: 'no',  php: '8.3' }
+          - { wp: nightly, ms: 'no',  php: '8.3' }
+          - { wp: latest,  ms: 'yes', php: '8.3' }
+          - { wp: nightly, ms: 'yes', php: '8.3' }
     services:
       mysql:
         image: mariadb:latest@sha256:a9385bb457ebf4600da632cc331f11a5328c582bfb492aa76517282bcae1dcc9
@@ -66,11 +66,6 @@ jobs:
         env:
           fail-fast: 'true'
 
-      - name: Install PHPUnit
-        run: |
-          wget -q -O /usr/local/bin/phpunit "https://phar.phpunit.de/phpunit-${{ matrix.config.phpunit }}.phar"
-          chmod +x /usr/local/bin/phpunit
-
       - name: Install dependencies
         uses: ramsey/composer-install@83af392bf5f031813d25e6fe4cd626cdba9a2df6 # tag=2.2.0
 
@@ -96,7 +91,7 @@ jobs:
           if [ "${{ steps.coverage.outputs.coverage }}" != 'none' ]; then
             OPTIONS="$OPTIONS --coverage-clover=clover.xml"
           fi
-          phpunit --order-by=random ${OPTIONS}
+          vendor/bin/phpunit --order-by=random ${OPTIONS}
 
       - name: Upload coverage report
         uses: codecov/codecov-action@e0b68c6749509c5f83f984dd99a76a1c1a231044 # v4.0.1
