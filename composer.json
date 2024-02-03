@@ -28,7 +28,7 @@
 		"phpunit/phpunit": "^9.6.16",
 		"psalm/plugin-phpunit": "^0.18.4",
 		"vimeo/psalm": "^5.21.1",
-		"wp-phpunit/wp-phpunit": "^6.4",
+		"wp-phpunit/wp-phpunit": "^6.4.2",
 		"yoast/phpunit-polyfills": "^2.0"
 	},
 	"config": {
