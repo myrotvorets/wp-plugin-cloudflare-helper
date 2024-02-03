@@ -9,7 +9,7 @@
             "fileMatch": "bin/test",
             "datasourceTemplate": "docker",
             "matchStrings": [
-                "[A-Z_]+_IMAGE=\"(?<depName>.*?):(?<currentValue>.*?)(@(?<currentDigest>sha256:[a-f0-9]+))?\""
+                "[A-Z_]+_IMAGE=\"(?<depName>.*?):(?<currentValue>.*?)@(?<currentDigest>sha256:[a-f0-9]+)\""
             ]
         }
     ]

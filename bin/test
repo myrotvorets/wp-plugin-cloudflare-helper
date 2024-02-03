@@ -1,7 +1,6 @@
 #!/bin/sh
 
-MYSQL_IMAGE="mysql:8"
-TEST_RUNNER_IMAGE="ghcr.io/automattic/vip-container-images/wp-test-runner:latest"
+MYSQL_IMAGE="mysql:8@sha256:d7c20c5ba268c558f4fac62977f8c7125bde0630ff8946b08dde44135ef40df3"
 
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -128,5 +127,5 @@ docker run \
     -e DISABLE_XDEBUG=1 \
     ${DOCKER_OPTIONS} \
     -v "$(pwd):/home/circleci/project" \
-    "${TEST_RUNNER_IMAGE}" \
+    ghcr.io/automattic/vip-container-images/wp-test-runner:latest \
     ${ARGS}
