@@ -82,6 +82,12 @@ class HttpCacheTest extends WP_UnitTestCase {
 				$response_400,
 				false,
 			],
+			'not matched url'     => [
+				'GET',
+				'https://api.cloudflare.com/client/v4/zones/00000000000000000000000000000000/settings/something-weird',
+				$response_200,
+				false,
+			],
 			'always_use_https'    => [
 				'GET',
 				'https://api.cloudflare.com/client/v4/zones/00000000000000000000000000000000/settings/always_use_https',
