@@ -10,9 +10,14 @@ use CF\WordPress\DataStore;
 use CF\WordPress\WordPressAPI;
 use CF\WordPress\WordPressClientAPI;
 use WP_Error;
-use WildWolf\Utils\Singleton;
 use WP_Post;
+use WildWolf\Utils\Singleton;
+use WpOrg\Requests\Utility\CaseInsensitiveDictionary;
 
+/**
+ * @psalm-type RequestArgsArray = array{method?: string, timeout?: float, redirection?: int, httpversion?: string, user-agent?: string, reject_unsafe_urls?: bool, blocking?: bool, headers?: string|array, cookies?: array, body?: string|array, compress?: bool, decompress?: bool, sslverify?: bool, sslcertificates?: string, stream?: bool, filename?: string, limit_response_size?: int}
+ * @psalm-type ResponseArray = array{headers: \WpOrg\Requests\Utility\CaseInsensitiveDictionary, body: string, response: array{code: int, message: string}, cookies: \WP_Http_Cookie[], filename: string|null}
+ */
 class Plugin {
 	use Singleton;
 
@@ -80,6 +85,8 @@ class Plugin {
 			add_action( 'admin_init', [ $this, 'admin_init' ] );
 		}
 
+		HttpCache::instance();
+
 		add_filter( 'cloudflare_purge_by_url', [ $this, 'cloudflare_purge_by_url' ], 10, 2 );
 		add_filter( 'pre_http_request', [ $this, 'pre_http_request' ], 10, 3 );
 		add_action( 'shutdown', [ $this, 'shutdown' ] );
@@ -96,15 +103,13 @@ class Plugin {
 	}
 
 	/**
-	 * @psalm-param mixed[] $args
+	 * @psalm-param RequestArgsArray $args
 	 */
 	public function http_request_args( array $args, string $url ): array {
 		assert( defined( 'CLOUDFLARE_DOMAIN' ) );
 
-		/** @var mixed */
 		$method = $args['method'] ?? '';
-		/** @var mixed */
-		$body = $args['body'] ?? '';
+		$body   = $args['body'] ?? '';
 
 		if ( 'PATCH' === $method && is_string( $body ) && ! empty( $body ) && preg_match( '!^https://api.cloudflare.com/client/v4/zones/[0-9a-f]{32}/settings/automatic_platform_optimization!', $url ) ) {
 			/** @var mixed */
@@ -155,12 +160,13 @@ class Plugin {
 	 * @param string $url
 	 * @return false|array|WP_Error
 	 * @codeCoverageIgnore
+	 * @psalm-param false|WP_Error|ResponseArray $response
+	 * @psalm-param RequestArgsArray $args
+	 * @psalm-return false|WP_Error|ResponseArray
 	 */
 	public function pre_http_request( $response, $args, $url ) {
-		/** @var mixed */
 		$method = $args['method'] ?? '';
-		/** @var mixed */
-		$body = $args['body'] ?? '';
+		$body   = $args['body'] ?? '';
 
 		if ( 'DELETE' === $method && is_string( $body ) && ! empty( $body ) && preg_match( '!^https://api.cloudflare.com/client/v4/zones/[0-9a-f]{32}/purge_cache!', $url ) ) {
 			/** @var mixed */
@@ -169,8 +175,8 @@ class Plugin {
 				/** @psalm-var string[] $body['files'] */
 				$this->urls_to_purge = array_merge( $this->urls_to_purge, $body['files'] );
 				$response            = [
-					'headers'  => [],
-					'body'     => wp_json_encode( [ 'success' => true ] ),
+					'headers'  => new CaseInsensitiveDictionary(),
+					'body'     => (string) wp_json_encode( [ 'success' => true ] ),
 					'response' => [
 						'code'    => 200,
 						'message' => 'OK',
