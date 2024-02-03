@@ -12,5 +12,14 @@
                 "[A-Z_]+_IMAGE=\"(?<depName>.*?):(?<currentValue>.*?)@(?<currentDigest>sha256:[a-f0-9]+)\""
             ]
         }
+    ],
+    "packageRules": [
+        {
+            "matchManagers": [
+                "regex"
+            ],
+            "matchFileNames": ["bin/test"],
+            "automerge": true
+        }
     ]
 }
