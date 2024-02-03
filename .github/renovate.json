@@ -2,5 +2,15 @@
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "extends": [
         "local>myrotvorets/.github:renovate-config"
+    ],
+    "customManagers": [
+        {
+            "customType": "regex",
+            "fileMatch": "bin/test",
+            "datasourceTemplate": "docker",
+            "matchStrings": [
+                "[A-Z_]+_IMAGE=\"(?<depName>.*?):(?<currentValue>.*?)(@(?<currentDigest>sha256:[a-f0-9]+))?\""
+            ]
+        }
     ]
 }
