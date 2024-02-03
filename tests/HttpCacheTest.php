@@ -1,6 +1,7 @@
 <?php
 
 use Myrotvorets\WordPress\CloudflareHelper\HttpCache;
+use PHPUnit\Framework\ExpectationFailedException;
 use WpOrg\Requests\Utility\CaseInsensitiveDictionary;
 
 class HttpCacheTest extends WP_UnitTestCase {
@@ -8,6 +9,9 @@ class HttpCacheTest extends WP_UnitTestCase {
 	 * @dataProvider data_requests
 	 * @covers Myrotvorets\WordPress\CloudflareHelper\HttpCache::pre_http_request
 	 * @covers Myrotvorets\WordPress\CloudflareHelper\HttpCache::http_response
+	 * @covers Myrotvorets\WordPress\CloudflareHelper\HttpCache::get_cache_key_and_ttl
+	 * @uses Myrotvorets\WordPress\CloudflareHelper\HttpCache::get_always_use_https_key
+	 * @uses Myrotvorets\WordPress\CloudflareHelper\HttpCache::get_pagerules_key
 	 */
 	public function test_requests( string $method, string $url, array $mocked_response, bool $cached ): void {
 		$cache = HttpCache::instance();
@@ -91,5 +95,28 @@ class HttpCacheTest extends WP_UnitTestCase {
 				true,
 			],
 		];
+	}
+
+	/**
+	 * @covers Myrotvorets\WordPress\CloudflareHelper\HttpCache::get_always_use_https_key
+	 */
+	public function test_get_always_use_https_key(): void {
+		$zone     = '00000000000000000000000000000000';
+		$expected = "cloudflare:settings:{$zone}:always_use_https";
+		$actual   = HttpCache::get_always_use_https_key( $zone );
+
+		self::assertEquals( $expected, $actual );
+	}
+
+	/**
+	 * @covers Myrotvorets\WordPress\CloudflareHelper\HttpCache::get_pagerules_key
+	 */
+	public function test_get_pagerules_key(): void {
+		$zone     = '00000000000000000000000000000000';
+		$status   = 'active';
+		$expected = "cloudflare:pagerules:{$zone}:{$status}";
+		$actual   = HttpCache::get_pagerules_key( $zone, $status );
+
+		self::assertEquals( $expected, $actual );
 	}
 }

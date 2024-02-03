@@ -18,8 +18,8 @@ final class HttpCache {
 
 	private const CACHE_GROUP = 'cloudflare-helper';
 
-	private const CACHE_TTL_ALWAYS_USE_HTTPS = 3600;
-	private const CACHE_TTL_PAGERULES        = 600;
+	public const CACHE_TTL_ALWAYS_USE_HTTPS = 3600;
+	public const CACHE_TTL_PAGERULES        = 600;
 
 	/**
 	 * @codeCoverageIgnore
@@ -109,14 +109,14 @@ final class HttpCache {
 	/**
 	 * @psalm-return non-empty-string
 	 */
-	private static function get_always_use_https_key( string $zone ): string {
+	public static function get_always_use_https_key( string $zone ): string {
 		return sprintf( 'cloudflare:settings:%s:always_use_https', $zone );
 	}
 
 	/**
 	 * @psalm-return non-empty-string
 	 */
-	private static function get_pagerules_key( string $zone, string $status ): string {
+	public static function get_pagerules_key( string $zone, string $status ): string {
 		return sprintf( 'cloudflare:pagerules:%s:%s', $zone, $status );
 	}
 }
