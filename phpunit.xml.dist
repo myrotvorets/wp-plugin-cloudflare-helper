@@ -4,7 +4,8 @@
     colors="true"
     convertDeprecationsToExceptions="true"
     beStrictAboutCoversAnnotation="true"
-    forceCoversAnnotation="true">
+    forceCoversAnnotation="true"
+    cacheResult="false">
   <coverage processUncoveredFiles="true">
     <include>
       <directory suffix=".php">inc</directory>
@@ -12,7 +13,7 @@
   </coverage>
   <testsuites>
     <testsuite name="Tests">
-      <directory prefix="test-" suffix=".php">./tests/</directory>
+      <directory suffix=".php">./tests/</directory>
     </testsuite>
   </testsuites>
 </phpunit>
