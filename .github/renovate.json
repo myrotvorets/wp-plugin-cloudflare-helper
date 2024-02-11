@@ -6,11 +6,15 @@
     "customManagers": [
         {
             "customType": "regex",
-            "fileMatch": "bin/test",
-            "datasourceTemplate": "docker",
+            "fileMatch": [
+                "^.devcontainer/([^/]+/)?devcontainer\\.json$",
+                "^.devcontainer\\.json$"
+            ],
             "matchStrings": [
-                "[A-Z_]+_IMAGE=\"(?<depName>.*?):(?<currentValue>.*?)@(?<currentDigest>sha256:[a-f0-9]+)\""
-            ]
+                "\"image\":\\s\"(?<depName>[^:\"]+):(?<currentValue>[^@\"]+)(@(?<currentDigest>sha256:[a-f0-9]+))?\""
+            ],
+            "autoReplaceStringTemplate": "\"image\": \"{{{depName}}}:{{{newValue}}}{{#if newDigest}}@{{{newDigest}}}{{/if}}\"",
+            "datasourceTemplate": "docker"
         }
     ],
     "packageRules": [
@@ -18,7 +22,7 @@
             "matchManagers": [
                 "regex"
             ],
-            "matchFileNames": ["bin/test"],
+            "matchFileNames": [".devcontainer/**/devcontainer.json"],
             "automerge": true
         }
     ]
