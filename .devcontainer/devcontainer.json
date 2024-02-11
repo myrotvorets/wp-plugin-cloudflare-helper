@@ -1,0 +1,5 @@
+{
+    "name": "Cloudflare Helper",
+    "image": "ghcr.io/sjinks/codespaces/wordpress-all-in-one:3",
+    "postCreateCommand": "ln -sf ${containerWorkspaceFolder} /wp/wp-content/plugins/wp-cloudflare-helper; wp plugin install --activate cloudflare; wp plugin activate wp-cloudflare-helper"
+}

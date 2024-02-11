@@ -1,0 +1,4 @@
+{
+    "name": "Cloudflare Helper (Test)",
+    "image": "ghcr.io/sjinks/codespaces/wordpress-test:latest"
+}
