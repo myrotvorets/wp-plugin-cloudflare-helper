@@ -36,7 +36,6 @@ class Plugin {
 	/**
 	 * @psalm-suppress UndefinedClass
 	 * @psalm-suppress MixedReturnStatement
-	 * @psalm-suppress MixedInferredReturnType
 	 * @codeCoverageIgnore
 	 */
 	public static function get_api_client(): ?WordPressClientAPI {
@@ -64,7 +63,7 @@ class Plugin {
 	 */
 	public static function get_zone_id(): ?string {
 		if ( defined( 'CLOUDFLARE_DOMAIN' ) && constant( 'CLOUDFLARE_DOMAIN' ) ) {
-			$domain = constant( 'CLOUDFLARE_DOMAIN' );
+			$domain = (string) constant( 'CLOUDFLARE_DOMAIN' );
 
 			$client = self::get_api_client();
 			if ( $client ) {
