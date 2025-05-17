@@ -89,7 +89,7 @@ jobs:
           vendor/bin/phpunit --order-by=random ${OPTIONS}
 
       - name: Upload coverage report
-        uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # v5.3.1
+        uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # v5.4.3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: clover.xml
