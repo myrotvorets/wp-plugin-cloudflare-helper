@@ -6,9 +6,9 @@
     "customManagers": [
         {
             "customType": "regex",
-            "fileMatch": [
-                "^.devcontainer/([^/]+/)?devcontainer\\.json$",
-                "^.devcontainer\\.json$"
+            "managerFilePatterns": [
+                "/^.devcontainer/([^/]+/)?devcontainer\\.json$/",
+                "/^.devcontainer\\.json$/"
             ],
             "matchStrings": [
                 "\"image\":\\s\"(?<depName>[^:\"]+):(?<currentValue>[^@\"]+)(@(?<currentDigest>sha256:[a-f0-9]+))?\""
@@ -20,9 +20,11 @@
     "packageRules": [
         {
             "matchManagers": [
-                "regex"
+                "custom.regex"
             ],
-            "matchFileNames": [".devcontainer/**/devcontainer.json"],
+            "matchFileNames": [
+                ".devcontainer/**/devcontainer.json"
+            ],
             "automerge": true
         }
     ]
