@@ -18,7 +18,7 @@ use WpOrg\Requests\Utility\CaseInsensitiveDictionary;
  * @psalm-type RequestArgsArray = array{method?: string, timeout?: float, redirection?: int, httpversion?: string, user-agent?: string, reject_unsafe_urls?: bool, blocking?: bool, headers?: string|array, cookies?: array, body?: string|array, compress?: bool, decompress?: bool, sslverify?: bool, sslcertificates?: string, stream?: bool, filename?: string, limit_response_size?: int}
  * @psalm-type ResponseArray = array{headers: \WpOrg\Requests\Utility\CaseInsensitiveDictionary, body: string, response: array{code: int, message: string}, cookies: \WP_Http_Cookie[], filename: string|null}
  */
-class Plugin {
+final class Plugin {
 	use Singleton;
 
 	/** @var string[] */
@@ -50,7 +50,6 @@ class Plugin {
 	/**
 	 * @psalm-suppress UndefinedClass
 	 * @psalm-suppress MixedReturnStatement
-	 * @psalm-suppress MixedInferredReturnType
 	 * @codeCoverageIgnore
 	 */
 	public static function get_api_client(): ?WordPressClientAPI {
@@ -78,7 +77,7 @@ class Plugin {
 	 */
 	public static function get_zone_id(): ?string {
 		if ( defined( 'CLOUDFLARE_DOMAIN' ) && constant( 'CLOUDFLARE_DOMAIN' ) ) {
-			$domain = constant( 'CLOUDFLARE_DOMAIN' );
+			$domain = (string) constant( 'CLOUDFLARE_DOMAIN' );
 
 			$client = self::get_api_client();
 			if ( $client ) {
