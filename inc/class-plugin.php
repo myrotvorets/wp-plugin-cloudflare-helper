@@ -3,12 +3,12 @@
 
 namespace Myrotvorets\WordPress\CloudflareHelper;
 
-use CF\Integration\DefaultConfig;
-use CF\Integration\DefaultIntegration;
-use CF\Integration\DefaultLogger;
-use CF\WordPress\DataStore;
-use CF\WordPress\WordPressAPI;
-use CF\WordPress\WordPressClientAPI;
+use Cloudflare\APO\Integration\DefaultConfig;
+use Cloudflare\APO\Integration\DefaultIntegration;
+use Cloudflare\APO\Integration\DefaultLogger;
+use Cloudflare\APO\WordPress\DataStore;
+use Cloudflare\APO\WordPress\WordPressAPI;
+use Cloudflare\APO\WordPress\WordPressClientAPI;
 use WP_Error;
 use WP_Post;
 use WildWolf\Utils\Singleton;
@@ -18,11 +18,13 @@ use WpOrg\Requests\Utility\CaseInsensitiveDictionary;
  * @psalm-type RequestArgsArray = array{method?: string, timeout?: float, redirection?: int, httpversion?: string, user-agent?: string, reject_unsafe_urls?: bool, blocking?: bool, headers?: string|array, cookies?: array, body?: string|array, compress?: bool, decompress?: bool, sslverify?: bool, sslcertificates?: string, stream?: bool, filename?: string, limit_response_size?: int}
  * @psalm-type ResponseArray = array{headers: \WpOrg\Requests\Utility\CaseInsensitiveDictionary, body: string, response: array{code: int, message: string}, cookies: \WP_Http_Cookie[], filename: string|null}
  */
-final class Plugin {
+class Plugin {
 	use Singleton;
 
 	/** @var string[] */
 	private $urls_to_purge = [];
+
+	private bool $paused = false;
 
 	/**
 	 * @codeCoverageIgnore
@@ -33,9 +35,22 @@ final class Plugin {
 		}
 	}
 
+	public function pause(): void {
+		$this->paused = true;
+	}
+
+	public function resume(): void {
+		$this->paused = false;
+	}
+
+	public function is_paused(): bool {
+		return $this->paused;
+	}
+
 	/**
 	 * @psalm-suppress UndefinedClass
 	 * @psalm-suppress MixedReturnStatement
+	 * @psalm-suppress MixedInferredReturnType
 	 * @codeCoverageIgnore
 	 */
 	public static function get_api_client(): ?WordPressClientAPI {
@@ -63,7 +78,7 @@ final class Plugin {
 	 */
 	public static function get_zone_id(): ?string {
 		if ( defined( 'CLOUDFLARE_DOMAIN' ) && constant( 'CLOUDFLARE_DOMAIN' ) ) {
-			$domain = (string) constant( 'CLOUDFLARE_DOMAIN' );
+			$domain = constant( 'CLOUDFLARE_DOMAIN' );
 
 			$client = self::get_api_client();
 			if ( $client ) {
@@ -171,8 +186,11 @@ final class Plugin {
 			/** @var mixed */
 			$body = json_decode( $body, true );
 			if ( is_array( $body ) && ! empty( $body['files'] ) && is_array( $body['files'] ) ) {
-				/** @psalm-var string[] $body['files'] */
-				$this->urls_to_purge = array_merge( $this->urls_to_purge, $body['files'] );
+				if ( ! $this->is_paused() ) {
+					/** @psalm-var string[] $body['files'] */
+					$this->urls_to_purge = array_merge( $this->urls_to_purge, $body['files'] );
+				}
+
 				$response            = [
 					'headers'  => new CaseInsensitiveDictionary(),
 					'body'     => (string) wp_json_encode( [ 'success' => true ] ),
